@@ -1,0 +1,57 @@
+- name: Deploy Jenkins Prometheus and Grafana top on Docker
+  hosts: monitoring
+  become: yes
+  tasks:
+    - name: Pull Jenkins Docker image
+      docker_image:
+        name: jenkins/jenkins:latest
+        source: pull
+
+    - name: Run Jenkins container
+      docker_container:
+        name: Jenkins-container
+        image: jenkins/jenkins:latest
+        state: started
+        restart_policy: unless-stopped
+        published_ports:
+          - "8080:8080"
+
+    - name: Pull Grafana Docker image
+      docker_image:
+        name: grafana/grafana
+        source: pull
+
+    - name: Run Grafana container
+      docker_container:
+        name: Grafana-container
+        image: grafana/grafana
+        state: started
+        restart_policy: unless-stopped
+        published_ports:
+          - "3000:3000"
+
+    - name: Pull Prometheus Docker image
+      docker_image:
+        name: bitnami/prometheus
+        source: pull
+
+    - name: Create Directory for Prometheus config
+      file:
+        path: /home/mahesajihanfadhlurrahman/prometheus
+        state: directory
+
+    - name: Copy prometheus config
+      copy:
+        src: ~/finaltask/prometheus.yml   # local/wsl
+        dest: /home/mahesajihanfadhlurrahman/prometheus/prometheus.yml
+
+    - name: Run Prometheus container
+      docker_container:
+        name: Prometheus-container
+        image: bitnami/prometheus
+        state: started
+        volumes:
+          - /home/mahesajihanfadhlurrahman/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+        restart_policy: unless-stopped
+        published_ports:
+          - "9090:9090"
