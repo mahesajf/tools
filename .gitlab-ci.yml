@@ -1,0 +1,41 @@
+default:
+  image: docker:20.10.16
+  services:
+    - docker:20.10.16-dind
+
+stages:
+  - test
+  - build
+  - push
+
+variables:
+  IMAGE_NAME: uisolusi
+  CONTAINER_NAME: mahesaj/uisolusi
+  DOCKER_DRIVER: overlay2
+  DOCKER_USERNAME: mahesaj
+  DOCKER_PASSWORD: dckr_pat_XDiCDSqPrJCTzMJyd5oxIOhcNtQ
+
+before_script:
+  - docker info
+  - docker --version
+  - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+
+test:
+  stage: test
+  script:
+    - docker run -d --name $IMAGE_NAME -p 3000:3000 $DOCKER_USERNAME/$IMAGE_NAME:latest
+
+build:
+  stage: build
+  script:
+    - cd test-case/ui/
+    - docker build -t $DOCKER_USERNAME/$IMAGE_NAME .
+    - docker tag $DOCKER_USERNAME/$IMAGE_NAME $DOCKER_USERNAME/$IMAGE_NAME:latest
+ 
+push:
+  stage: push
+  script:
+    - cd test-case/ui/
+    - docker build -t $DOCKER_USERNAME/$IMAGE_NAME .
+    - docker tag $DOCKER_USERNAME/$IMAGE_NAME $DOCKER_USERNAME/$IMAGE_NAME:latest
+    - docker push $DOCKER_USERNAME/$IMAGE_NAME:latest
