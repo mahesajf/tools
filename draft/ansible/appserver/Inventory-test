@@ -1,0 +1,34 @@
+[appserver]
+xxx.xxx.xxx
+
+[gateway]
+x.x.x
+
+[monitoring]
+#
+
+# Jika ragu semua semua server [all:vars]
+# pakai lah selain user ansible_user=mahesa
+
+
+
+[group_a]
+erver1 ansible_host=203.0.113.111 
+server2 ansible_host=203.0.113.112
+
+[group_b]
+server3 ansible_host=203.0.113.113 
+server4 ansible_host=server_hostname
+
+[group_a:vars]
+ansible_user=sammy
+
+[group_b:vars]
+ansible_user=myuser
+
+
+
+server1 ansible_host=203.0.113.111 ansible_user=sammy
+server2 ansible_host=203.0.113.112 ansible_user=sammy
+server3 ansible_host=203.0.113.113 ansible_user=myuser
+server4 ansible_host=server_hostname ansible_user=myuser

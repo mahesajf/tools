@@ -1,0 +1,42 @@
+- hosts: all # jika berbeda tambahkan
+  become: true
+  tasks:
+    - name: Membuat user 
+      user:
+        name: test
+        groups: sudo
+        state: present
+        shell: /bin/bash
+        system: no
+        createhome: yes
+        home: /home/test
+
+  #  - name: User tambahan
+  #    user:
+  #      name: apaaja
+  #      group: sudo
+  #      state: present
+  # referensi lain https://clarusway.com/creating-adding-authorizing-users-and-groups-with-ansible/
+  # https://www.alibabacloud.com/blog/managing-system-users-using-ansible_593861
+
+    - name: Copy SSH public key ke remote host 
+      authorized_key:
+        user: test
+        key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"  
+        state: present
+
+    #- name: Change PasswordAuthentication  #bisa opsional
+    #  lineinfile:
+    #    path: /etc/ssh/sshd_config
+    #    regexp: '^PasswordAuthentication'
+    #    line: 'PasswordAuthentication no'  
+    #    state: present
+    #  notify:
+    #    - Restart SSH
+
+  handlers:
+    - name: Restart SSH
+      service:
+        name: sshd
+        state: restarted
+ 

@@ -1,0 +1,12 @@
+[appserver]
+27.112.79.208
+
+[gateway]
+103.176.78.252
+
+[monitoring]
+103.226.138.31
+
+[all:vars]
+ansible_user=mahesa 
+ubuntu_apt_mirror= 'archive.ubuntu.com'

@@ -1,0 +1,17 @@
+[learnserver]
+103.250.11.205
+
+[appserver]
+34.142.157.248
+
+[gateway]
+35.198.199.209
+
+[monitoring]
+34.125.192.30
+
+[gcp]
+34.67.55.176
+
+[all:vars]
+ansible_user=ubuntu

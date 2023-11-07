@@ -1,0 +1,11 @@
+global:
+  scrape_interval: 10s
+scrape_configs:
+  - job_name: 'prometheus_metrics'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['34.125.185.208:9090']  # ip monitoring
+  - job_name: 'node_exporter_metrics'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['34.142.157.248:9100','35.198.199.209:9100']  # ip appserver,gateway

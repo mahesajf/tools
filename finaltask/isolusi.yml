@@ -1,0 +1,14 @@
+- name: Deploy Prometheus and Grafana top on Docker
+  hosts: monitoring
+  become: yes
+  tasks:
+    - name: Run Prometheus container
+      docker_container:
+        name: Prometheus-container
+        image: bitnami/prometheus
+        state: started
+        volumes:
+          - ~/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml  # server home directory \\ system server
+        restart_policy: unless-stopped
+        published_ports:
+          - "9090:9090"

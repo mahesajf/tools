@@ -1,0 +1,73 @@
+version: "3.8"
+services:
+   nginx:
+    image: nginx
+    container_name: nginx
+    stdin_open: true
+    restart: unless-stopped
+    ports:
+      - 80:80
+    volumes:
+      - ~/nginx/proxy.conf:/etc/nginx/sites-enabled/proxy.conf
+   ui:
+    depends_on:
+      - nginx
+    build: ./test-case/ui
+    image: mahesaj/uisolusi:latest
+    container_name: uisolusi
+    stdin_open: true
+    restart: unless-stopped
+    ports:
+      - 3000:3000
+   trx:
+    build: ./test-case/trx
+    image: mahesaj/trxsolusi:latest
+    container_name: trxsolusi
+    stdin_open: true
+    restart: unless-stopped
+    ports:
+      - 8090:8090
+   report:
+    build: ./test-case/report
+    image: mahesaj/reportsolusi:latest
+    container_name: reportsolusi
+    stdin_open: true
+    restart: unless-stopped
+    ports:
+      - 8000:8000
+   prometheus:
+    image: bitnami/prometheus
+    container_name: prometheus
+    stdin_open: true
+    restart: unless-stopped
+    ports:
+      - 9090:9090
+    volumes:
+      - ~/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+   grafana:
+    image: bitnami/grafana
+    stdin_open: true
+    restart: unless-stopped
+    ports:
+      - 3500:3000
+    volumes:
+      - ~/grafana_configs:/etc/prometheus/prometheus.yml
+   loki:
+    image: grafana/loki:2.8.0
+    container_name: loki
+    volumes:
+      - ./loki-config.yaml:/mnt/config/loki-config.yaml
+    ports:
+      - "3100:3100"
+    command: -config.file=/mnt/config/loki-config.yaml
+   promtail:
+    image: grafana/promtail:2.8.0
+    container_name: promtail
+    volumes:
+      - ./promtail-config.yaml:/mnt/config/promtail-config.yaml
+      - /var/log:/var/log
+    links:
+      - loki
+    command: -config.file=/mnt/config/promtail-config.yaml
+    depends_on:
+      - loki

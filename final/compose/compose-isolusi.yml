@@ -1,0 +1,70 @@
+version: "3.8"
+services:
+   nginx:
+    image: nginx
+    container_name: nginx
+    stdin_open: true
+    restart: unless-stopped
+    ports:
+      - 80:80
+    volumes:
+      - ~/nginx/proxy.conf:/etc/nginx/sites-enabled/proxy.conf
+   ui:
+    depends_on:
+      - nginx
+    image: mahesaj/uisolusi
+    container_name: uisolusi
+    stdin_open: true
+    restart: unless-stopped
+    ports:
+      - 3000:3000
+   trx:
+    image: mahesaj/trxsolusi
+    container_name: trxsolusi
+    stdin_open: true
+    restart: unless-stopped
+    ports:
+      - 8090:8090
+   report:
+    image: mahesaj/reportsolusi
+    container_name: reportsolusi
+    stdin_open: true
+    restart: unless-stopped
+    ports:
+      - 8000:8000
+   prometheus:
+    image: bitnami/prometheus
+    container_name: prometheus
+    stdin_open: true
+    restart: unless-stopped
+    ports:
+      - 9090:9090
+    volumes:
+      - ~/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+   grafana:
+    image: bitnami/grafana
+    stdin_open: true
+    restart: unless-stopped
+    ports:
+      - 3500:3000
+    volumes:
+      - ~/grafana_configs:/etc/prometheus/prometheus.yml
+   loki:
+    image: grafana/loki:2.8.0
+    stdin_open: true
+    restart: unless-stopped
+    ports:
+      - 3100:3100
+    volumes:
+      - ~/grafana_configs/loki-config.yaml:/mnt/config/loki-config.yaml
+    command: --config.file=/mnt/config/loki-config.yaml
+   promtail:
+    image: grafana/promtail:2.8.0
+    stdin_open: true
+    restart: unless-stopped
+    volumes:
+      - ~/grafana_configs/promtail-config.yaml:/mnt/config/promtail-config.yaml
+      - /var/log:/var/log
+    depends_on:
+      - loki
+    command: --config.file=/mnt/config/promtail-config.yaml

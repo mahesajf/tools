@@ -1,0 +1,11 @@
+[app]
+103.31.39.137 #ansible_user=mahe
+
+[gateway]
+103.183.75.51 
+
+[monitoring]
+103.181.142.30 
+
+[all:vars]
+ansible_user=mahesa

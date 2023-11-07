@@ -1,0 +1,11 @@
+[appserver]
+34.142.157.248
+
+[gateway]
+35.198.199.209
+
+[monitoring]
+34.125.192.30
+
+[all:vars]
+ansible_user=mahesajihanfadhlurrahman
